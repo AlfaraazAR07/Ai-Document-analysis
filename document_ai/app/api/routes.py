@@ -28,10 +28,12 @@ async def verify_api_key(x_api_key: Optional[str] = Header(None)) -> str:
     return x_api_key
 
 
+from fastapi import Depends
+
 @router.post("/document-analyze", response_model=DocumentResponse)
 async def analyze_document(
     request: DocumentRequest,
-    api_key: str = verify_api_key
+    api_key: str = Depends(verify_api_key)
 ):
     try:
         result = await orchestrator.process_document(
@@ -59,7 +61,7 @@ async def analyze_document(
 @router.post("/document-analyze-async")
 async def analyze_document_async(
     request: DocumentRequest,
-    api_key: str = verify_api_key
+    api_key: str = Depends(verify_api_key)
 ):
     try:
         task = process_document_async.delay(
